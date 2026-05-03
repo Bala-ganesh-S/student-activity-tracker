@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student Activity Tracker</title>
+
+<style>
+body{
+    font-family: Arial;
+    margin: 0;
+    background: linear-gradient(to right, #74ebd5, #9face6);
+    text-align: center;
+}
+
+header{
+    color: white;
+    padding: 20px;
+}
+
+.container{
+    background: white;
+    width: 90%;
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+h2{
+    color: #333;
+}
+
+.activity{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.completed{
+    text-decoration: line-through;
+    color: gray;
+}
+
+button{
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover{
+    background: #45a049;
+}
+
+/* Progress Bar */
+.progress-bar{
+    background: #ddd;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+.progress-fill{
+    height: 20px;
+    background: #4CAF50;
+    width: 0%;
+    color: white;
+    font-size: 12px;
+    line-height: 20px;
+}
+
+#progressText{
+    font-weight: bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h1>📘 Student Activity Tracker</h1>
+<p>Track your daily learning</p>
+</header>
+
+<div class="container">
+
+<h2>Activities</h2>
+
+<div id="activityList"></div>
+
+<div class="progress-bar">
+<div class="progress-fill" id="progressFill"></div>
+</div>
+
+<p id="progressText"></p>
+
+</div>
+
+<script>
+
+let activities = JSON.parse(localStorage.getItem("activities")) || [
+    {name: "Learn HTML Basics", status: false},
+    {name: "Practice CSS Styling", status: false},
+    {name: "Study JavaScript", status: false},
+    {name: "Build Mini Project", status: false},
+    {name: "Revise Concepts", status: false}
+];
+
+function renderActivities(){
+    let list = document.getElementById("activityList");
+    list.innerHTML = "";
+
+    let completed = 0;
+
+    activities.forEach((act, index) => {
+
+        let div = document.createElement("div");
+        div.className = "activity";
+
+        if(act.status) completed++;
+
+        div.innerHTML = `
+            <span class="${act.status ? 'completed' : ''}">
+                ${act.name}
+            </span>
+            <button onclick="toggleStatus(${index})">
+                ${act.status ? 'Undo' : 'Done'}
+            </button>
+        `;
+
+        list.appendChild(div);
+    });
+
+    // Progress text
+    document.getElementById("progressText").innerText =
+        `${completed} / ${activities.length} completed`;
+
+    // Progress bar
+    let percent = (completed / activities.length) * 100;
+    let fill = document.getElementById("progressFill");
+    fill.style.width = percent + "%";
+    fill.innerText = Math.round(percent) + "%";
+
+    localStorage.setItem("activities", JSON.stringify(activities));
+}
+
+function toggleStatus(index){
+    activities[index].status = !activities[index].status;
+    renderActivities();
+}
+
+renderActivities();
+
+</script>
+
+</body>
+</html>
